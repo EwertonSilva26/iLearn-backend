@@ -1,0 +1,41 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_question`(questionTitle varchar(200), TextQuestion TEXT,
+teacherAnswer TEXT, tipQuestion varchar(500), classCode varchar(100), userId INT)
+BEGIN
+	DECLARE questionId INT;
+    DECLARE idClass INT;
+    DECLARE idTeacher INT;
+
+	SELECT id_teacher FROM tb_teacher WHERE id_user = userId INTO idTeacher;
+
+	INSERT INTO tb_question (title, question, teacher_answer, tip) 
+    VALUES (questionTitle, TextQuestion, teacherAnswer, tipQuestion);
+	
+	SELECT id_class FROM tb_class WHERE class_code = classCode INTO idClass;
+    SELECT id_question FROM tb_question WHERE title = questionTitle INTO questionId;
+
+	SET FOREIGN_KEY_CHECKS=0;
+	INSERT INTO tb_class_question_answer_student_teacher (id_class, id_teacher, id_question) 
+    VALUES (idClass, idTeacher, questionId);
+    SET FOREIGN_KEY_CHECKS=1;
+END
+DELIMITER ;
+
+CALL insert_question('Maior de 16 anos poderá voltar','Pegue a data de nascimento da pessoa, 
+verifique se ela tem 16 ou mais anos de idade, se sim print na tela que
+a pessoa poderá votar na proxima eleição se não ela não poderá votar.', 
+'#include <stdio.h>
+void main()
+{
+    int anoAtual, anoNascimento;
+    printf("Digite o ano atual: ");
+    scanf("%d", &anoAtual);
+    printf("Digite o ano de nascimento: ");
+    scanf("%d", &anoNascimento);
+    if((anoAtual - anoNascimento) >= 16){
+        printf("Você poderá voltar esse ano");
+    } else {
+        printf("Você não poderá voltar esse ano");
+    }
+}', 'Comece criando duas variaveis, uma para coletar o atual e outra para pegar o ano de nascimento da pessoa, 
+em seguida verique se a diferença entre o ano atual e o ano de nascimento da pessoa é maior ou igual a 16.',"t8a5er3bn4");

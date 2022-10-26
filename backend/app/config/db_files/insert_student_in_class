@@ -1,0 +1,16 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_student_in_class`(idStudent INT, classCode varchar(100))
+BEGIN
+	DECLARE classId INT;
+    DECLARE studentId INT;
+    
+    SELECT id_class FROM tb_class WHERE class_code = classCode INTO classId;
+    SELECT id_student FROM tb_student WHERE id_user = idStudent INTO studentId;
+	
+    SET FOREIGN_KEY_CHECKS=0;
+    UPDATE tb_class_question_answer_student_teacher SET id_student = studentId
+    WHERE id_class = classId;
+END $$
+DELIMITER ;
+
+CALL insert_student_in_class(1, 'p78ar6lt3');

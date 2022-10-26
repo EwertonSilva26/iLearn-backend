@@ -1,0 +1,36 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_classes`(userId INT)
+BEGIN
+	DECLARE userNumber INT;
+	DECLARE teacherId INT;
+    DECLARE studentId INT;
+
+	SELECT COUNT(*) FROM tb_teacher WHERE id_user = userId INTO userNumber;
+    
+    IF userNumber > 0 THEN
+		SELECT id_teacher FROM tb_teacher WHERE id_user = userId INTO teacherId;
+
+		SELECT DISTINCT tc.class_name, tc.class_code
+		FROM tb_class_question_answer_student_teacher AS tcqast
+		INNER JOIN tb_teacher AS tt
+		ON tt.id_teacher = tcqast.id_teacher
+		INNER JOIN tb_class AS tc
+		ON tc.id_class = tcqast.id_class
+		WHERE tt.id_teacher = teacherId
+        ORDER BY tc.class_name DESC;
+	ELSE 
+    	SELECT id_student FROM tb_student WHERE id_user = userId INTO studentId;
+
+		SELECT DISTINCT tc.class_name, tc.class_code 
+		FROM tb_class_question_answer_student_teacher AS tcqast
+		INNER JOIN tb_student AS ts
+		ON ts.id_student = tcqast.id_student
+		INNER JOIN tb_class AS tc
+		ON tcqast.id_class = tc.id_class
+		WHERE ts.id_student = studentId
+        ORDER BY tc.class_name DESC;
+
+	END IF;  
+	
+END
+
+call get_all_classes(2);

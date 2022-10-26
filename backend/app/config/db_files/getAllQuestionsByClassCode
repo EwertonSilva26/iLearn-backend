@@ -1,0 +1,14 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllQuestionsByClassCode`(classCode varchar(100))
+BEGIN
+		SELECT * FROM tb_class_question_answer_student_teacher AS tcqast
+          INNER JOIN tb_class AS tc
+          ON tcqast.id_class = tc.id_class
+          INNER JOIN tb_question AS tq
+          ON tcqast.id_question = tq.id_question
+          WHERE tc.class_code = classCode
+          group by tq.title
+          order by tcqast.id_class_question_answer_student_teacher desc;
+	
+END
+
+CALL getAllQuestionsByClassCode('3a89a9aa8b');
